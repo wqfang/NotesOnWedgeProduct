@@ -1,0 +1,339 @@
+% \RequirePackage[dvipsnames]{xcolor}
+\documentclass[preprint,12pt]{elsarticle}
+% \usepackage{natbib}
+\setcounter{secnumdepth}{3}
+
+%%%% *** Do not adjust lengths that control margins, column widths, etc. ***
+
+%% Figures
+\usepackage{savesym}
+\usepackage{amsmath}
+\numberwithin{equation}{section}
+\usepackage{ccaption}
+%\usepackage{subcaption}
+\usepackage{verbatim}
+\usepackage{epsfig}
+\usepackage{asymptote}
+\graphicspath{{Figures/}} %This is where you have saved the images
+\usepackage{helvet}
+
+%% Math packages
+\usepackage{mathabx}
+\savesymbol{ulcorner}
+\savesymbol{urcorner}
+\savesymbol{llcorner}
+\savesymbol{lrcorner}
+\usepackage{amsfonts}
+\restoresymbol{AMS}{ulcorner}
+\restoresymbol{AMS}{urcorner}
+\restoresymbol{AMS}{llcorner}
+\restoresymbol{AMS}{lrcorner}
+\usepackage[bbgreekl]{mathbbol}
+\DeclareSymbolFontAlphabet{\mathbbm}{bbold}
+\DeclareSymbolFontAlphabet{\mathbb}{AMSb}
+\usepackage{amsthm}
+\usepackage{cases}
+\usepackage[T1]{fontenc}
+\usepackage{amssymb}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{soul}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{pict2e}
+\usepackage{mwe}
+\usepackage{footmisc}
+\usepackage[cal=boondox,scr=boondoxo]{mathalfa}
+\usepackage{multirow}
+
+
+% Proofreading
+%\usepackage{showlabels}
+\setlength {\marginparwidth }{2cm}
+\usepackage{todonotes}
+% \usepackage{showkeys}
+%\usepackage{comment}
+%\usepackage{lineno}
+
+
+% \usepackage{xcolor}
+% \pagecolor[rgb]{0.1,0.1,0.1}
+% \color[rgb]{1,1,1}
+
+
+\usepackage{varioref}
+\usepackage{url}
+\usepackage{chapterbib}% for testing compatibility
+\usepackage{mwe}
+\usepackage{hyperref}
+% \usepackage{float}
+
+
+% to put something at very end of main aux file
+\usepackage{atveryend}% also loaded by hyperref
+\makeatletter
+    \AfterLastShipout{\immediate\write\@mainaux{\relax}}%
+\makeatother
+
+% boolean to activate or not insertion of label keys in toc, lof, lot:
+\newif\ifHNNdraft
+\HNNdrafttrue
+% suppress key insertions in toc, lof, lot:
+% \HNNdraftfalse
+
+\makeatletter
+
+\let\original@writefile\@writefile
+
+\def\@writefile #1#2#3{\def\HNN@fileext{#1}%
+     \let\HNN@next\original@writefile
+     \in@{#1}{toc,lof,lot}%
+     \ifin@
+       \ifx\newlabel#3%
+          \def\HNN@next ##1##2\newlabel
+         {\futurelet\HNN@tmp\HNN@writefile #2\empty\HNN@writefile}%
+       \fi
+     \fi
+     \HNN@next {#1}{#2}#3% fingers extra crossed
+}%
+\def\HNN@writefile
+{%
+    \ifx\HNN@tmp\contentsline\expandafter\HNN@writefile@a\else
+                             \expandafter\HNN@writefile@abort
+    \fi
+}%
+\def\HNN@writefile@a \contentsline #1#2#3\HNN@writefile #4%
+{%
+    \original@writefile{\HNN@fileext}{\contentsline{#1}{#2\HNN@showkey {#4}}#3}%
+    \newlabel {#4}%
+}%
+\def\HNN@writefile@abort #1\HNN@writefile
+{%
+    \original@writefile{\HNN@fileext}{#1}\newlabel
+}%
+\protected\def\HNN@showkey #1%
+         {\ifHNNdraft\space\space \textit{key:} \texttt{#1}\fi}
+
+\ifHNNdraft
+%   \KOMAoptions{listof=nochaptergap}
+
+\fi
+\makeatother
+
+
+
+
+
+\renewcommand{\footnotesize}{\scriptsize}
+
+\usepackage{nomencl}
+\makenomenclature
+
+
+
+%% New commands %%
+\newcommand{\bodyManifold}{\mathcal{B}}
+\newcommand{\materialPtManifold}{\mathcal{X}}
+\newcommand{\RefEuclideanPtSpace}{\mathcal{E}_{\rm R}}
+\newcommand{\DefEuclideanPtSpace}{\mathcal{E}}
+
+\newcommand{\vecSpaceRefPos}{\mathbb{E}_{\rm R}}
+\newcommand{\vecSpaceDefPos}{\mathbb{E}}
+\newcommand{\vecSpaceRefVel}{\mathbb{V}_{\rm R}}
+\newcommand{\vecSpaceDefVel}{\mathbb{V}}
+\newcommand{\vecSpaceRefAcc}{\mathbb{A}_{\rm R}}
+\newcommand{\vecSpaceDefAcc}{\mathbb{A}}
+\newcommand{\vecSpaceAngVel}{\bbomega}
+\newcommand{\vecSpaceAngAcc}{\bbalpha}
+\newcommand{\vecSpaceAngMomentum}{\mathbb{H}}
+\newcommand{\vecSpaceTorque}{\mathbb{T}}
+
+
+\newcommand{\RefPosVec}{\boldsymbol{X}}
+\newcommand{\DefPosVec}{\boldsymbol{x}}
+\newcommand{\Configuration}{\boldsymbol{\kappa}}
+\newcommand{\MapManifoldToRefPos}{\boldsymbol{\kappa}_{\rm R}}
+\newcommand{\MapManifoldToDefPos}{\boldsymbol{\kappa}_\tau}
+\newcommand{\InverseMapManifoldToRefPos}{\boldsymbol{\kappa}^{-1}_{\rm R}}
+\newcommand{\iBasisVecSpacRefPos}{\boldsymbol{E}_i}
+\newcommand{\jBasisVecSpacRefPos}{\boldsymbol{E}_j}
+\newcommand{\iBasisVecSpacDefPos}{\boldsymbol{e}_i}
+\newcommand{\jBasisVecSpacDefPos}{\boldsymbol{e}_j}
+\newcommand{\iBasisVecSpacRefVel}{\boldsymbol{V}_i}
+\newcommand{\iBasisVecSpacDefVel}{\boldsymbol{v}_i}
+\newcommand{\jBasisVecSpacDefVel}{\boldsymbol{v}_j}
+\newcommand{\kBasisVecSpacDefVel}{\boldsymbol{v}_k}
+\newcommand{\iBasisVecSpacRefAcc}{\boldsymbol{A}_i}
+\newcommand{\iBasisVecSpacDefAcc}{\boldsymbol{a}_i}
+\newcommand{\jBasisVecSpacDefAcc}{\boldsymbol{a}_j}
+\newcommand{\OrientationTensor}{\boldsymbol{Q}_\tau}
+\newcommand{\TransposeOrientationTensor}{\boldsymbol{Q}^{T}_\tau}
+
+
+\newcommand{\DefAngVel}{\boldsymbol{w}}
+\newcommand{\RateDefAngMomentum}{\dot{\tilde{\boldsymbol{h}}}}
+\newcommand{\DefAngMomentum}{\tilde{\boldsymbol{h}}}
+\newcommand{\DefAngMomentumTensor}{\tilde{\boldsymbol{H}}}
+\newcommand{\DefTorque}{\tilde{\boldsymbol{t}}}
+\newcommand{\RefEulerTensor}{\tilde{\boldsymbol{E}}_{\rm{R}}}
+\newcommand{\DefEulerTensor}{\tilde{\boldsymbol{E}}}
+\newcommand{\DefInertiaTensor}{\tilde{\boldsymbol{J}}}
+\newcommand{\barspJMat}{\boldsymbol{\bar{\tilde{\sf J}}}}
+
+\newcommand{\ConfigManifold}{\mathfrak{C}}
+
+
+\renewcommand{\u}[1]{\boldsymbol{#1}}
+\newcommand{\OriginRefEucldPtSpace}{O_{\rm R}}
+\newcommand{\MapManifoldToRefEucldPtSpace}{\kappa_{\rm R}}
+\renewcommand{\t}[1]{\tilde{#1}}
+\newcommand{\m}[1]{\mathbb{#1}}
+\renewcommand{\c}[1]{\mathcal{#1}}
+\newcommand{\lsc}[2][\mathscr{l}]{{}^{ #1 }\! #2}
+\newcommand{\lscH}[1]{\lsc[H]{#1}}
+\newcommand{\dsf}[1]{\Delta\boldsymbol{\sf #1}}
+\newcommand{\tpsb}[1]{\left. #1 \right.^{\sf T}}
+\newcommand{\tps}[1]{\left( #1 \right)^{\sf T}}
+\newcommand{\usf}[1]{\u{\sf #1}}
+\newcommand{\busf}[1]{\bar{\usf{ #1}}}
+\newcommand{\tu}[1]{\tilde{\u{ #1}}}
+\newcommand{\tusf}[1]{\tilde{\usf{ #1}}}
+\newcommand{\btusf}[1]{\bar{\tusf{ #1}}}
+\newcommand{\pr}[1]{\left( #1 \right)}
+\newcommand*{\subfigurewdith}{0.8\textwidth}
+
+
+
+
+
+\def\RR{\bf R}
+\def\bold#1{\bf #1}
+\def\mbf#1{\mathbf #1}
+\def\uv#1{\hat{\boldsymbol {#1}}}
+\def\dl#1{\underline{\underline{#1}}}
+
+
+
+
+\definecolor{carmine}{rgb}{0.59, 0.0, 0.09}
+\newenvironment{HKToCheck}{\par\color{carmine}}{\par}
+\newenvironment{AliceToDo}{\par\color{OliveGreen}}{\par}
+\newenvironment{MasiurToCheck}{\par\color{orange}}{\par}
+\newenvironment{violet}{\par\color{-green!40!yellow}}{\par}
+
+%%%%%%%%%%% Defining Enunciations  %%%%%%%%%%%
+\newtheorem{theorem}{\bf Theorem}[section]
+\newtheorem{condition}{\bf Condition}[section]
+\newtheorem{corollary}{\bf Corollary}[section]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DeclareMathOperator{\sinc}{sinc}
+% \usepackage[none]{hyphenat} %temporary remove hyphens for spell check
+
+%%%%%%%%
+
+\begin{document}
+%
+\clearpage
+%%%% Article title to be placed here
+
+\title{Notes on the principle of balance of angular momentum using exterior algebra
+}
+
+\author[1]{Wenqiang Fang}
+\author[1]{Haneesh Kesari\corref{cor1}}
+\ead{haneesh\_kesari@brown.edu}
+\address[1]{Brown University School of Engineering, 184 Hope St., Providence, RI, USA}
+% \address[2]{Institute for Molecular and Nanoscale Innovation, Brown University, 184 Hope St., Providence, RI, USA}
+% \subject{rigid body dynamics, acceleration field measurement}
+\begin{keyword}
+angular momentum \sep net specific torque
+\end{keyword}
+% \articleinfobox
+\cortext[cor1]{Corresponding author }
+
+%===========================================================================
+
+\maketitle
+
+
+\section{
+The principle of balance of angular momentum using exterior algebra
+}
+\label{sec:Exterior}
+%\linenumbers
+ 
+For a solid body $\mathcal{B}$ in 3D space, the specific angular momentum is 
+\begin{equation}
+\label{eq:AM}
+\tilde{\boldsymbol{L}} = \int_{\mathcal{B}} \boldsymbol{\pi}_{\tau} \times \dot{\boldsymbol{\pi}}_{\tau} \, d\tilde{\rho},
+\end{equation}
+and the net specific torque is 
+\begin{equation}
+\label{eq:NT}
+\tilde{\boldsymbol{T}} = \int_{\mathcal{B}} \boldsymbol{\pi}_{\tau} \times  d\tilde{\boldsymbol{f}_{\tau}}.
+\end{equation}
+
+It follows from the principle of balance of angular momentum that 
+\begin{equation}
+\tilde{\boldsymbol{L}}'(\tau) = \tilde{\boldsymbol{T}} (\tau).
+\end{equation}
+
+From the Wikipedia page, we know that the cross product can be defined in terms of the exterior product:
+
+\begin{equation}
+\u{a} \times \u{b} = \star(\u a \wedge \u b),
+\end{equation}
+where $\star(\cdot)$ is the Hodge star operator. In general, for $n$-dimensional vector space, the Hodge star maps each $k$-vector to an $(n - k)$-vector. A common example of the Hodge star operator is the case $n = 3$, when it can be taken as the correspondence between the vectors and the $3\times3$ skew-symmetric matrices. We define $(\hat{\u e}_i)_{i \in \c I}$ as basis vectors for $\mathbb{R}^3$, then
+\begin{align*}
+\star (\hat{\u e}_1 \wedge \hat{\u e}_2) &= \hat{\u e}_3, \\
+\star (\hat{\u e}_2 \wedge \hat{\u e}_3) &= \hat{\u e}_1, \\
+\star (\hat{\u e}_3 \wedge \hat{\u e}_1) &= \hat{\u e}_2.
+\end{align*}
+
+
+The general expression of $\star (\u e_{i_1} \wedge \u e_{i_2}) $ is given by 
+\begin{equation}
+\star (\u e_{i_1} \wedge \u e_{i_2}) = \sqrt{|\det[g_{ab}]|} g^{i_1 j_2}g^{i_2 j_2} \epsilon_{j_1 \cdots j_n} \u e_{j_3} \wedge \cdots \wedge \u e_{j_n} 
+\end{equation}
+providing that $j_3 < \cdots < j_n$, where $\epsilon_{j_1 \cdots j_n} $ is the Levi-Civita symbol defined so that $\epsilon_{1 \cdots n} = 1$, and $g_{ab}$ is the metric and $g^{ij}$ is its inverse. 
+
+We generalize the definition of specific angular momentum and net specific torque into space that are not 3D by replacing the cross product operation with composition of Hodge star and wedge product operation in~\eqref{eq:AM} and~\eqref{eq:NT}. They are returned as 
+\begin{equation}
+\label{eq:wAM}
+\tilde{\boldsymbol{L}} = \int_{\mathcal{B}} \star\left(\boldsymbol{\pi}_{\tau} \wedge \dot{\boldsymbol{\pi}}_{\tau}\right) \, d\tilde{\rho},
+\end{equation}
+and
+\begin{equation}
+\label{eq:wNT}
+\tilde{\boldsymbol{T}} = \int_{\mathcal{B}}\star\left( \boldsymbol{\pi}_{\tau} \wedge  d\tilde{\boldsymbol{f}_{\tau}}\right).
+\end{equation}
+
+We are facing with a difficulty that $\boldsymbol{\pi}_{\tau}$ and $\dot{\boldsymbol{\pi}}_{\tau}$ live in different spaces. Same problem exists between $\boldsymbol{\pi}_{\tau}$ and $d\tilde{\boldsymbol{f}_{\tau}}$. However, wedge product is only defined between two alternating multilinear functions on the same vector space. To deal with this conflict, we pull all the units out from their basis vectors of $\boldsymbol{\pi}_{\tau}$, $\dot{\boldsymbol{\pi}}_{\tau}$ and $d\tilde{\boldsymbol{f}_{\tau}}$. We introduce the vectors for units as $\u l = (l_i)_{i \in  \c I }$, $\u s = (s_i)_{i \in  \c I }$ and $\u f = (f_i)_{i \in  \c I }$ defined by 
+\begin{align*}
+\u e_i & = l_i  \hat{\u e}_i \quad \rm(no\ summation), \\
+\u v_i & = s_i  \hat{\u e}_i \quad \rm(no\ summation), \\
+\u a_i & = f_i  \hat{\u e}_i \quad \rm(no\ summation),
+ \end{align*} 
+ where $\hat{\u e}_i$ are basis vectors in $\mathbb{R}^n$.
+
+Then, the specific angular momentum and net specific torque are defined by
+\begin{equation}
+\label{eq:rightAM}
+\tilde{\boldsymbol{L}} = \int_{\mathcal{B}}  l_i v_j \star\left(\hat{\u e}_i \wedge  \hat{\u e}_j\right){\pi}_{\tau i} \dot{{\pi}}_{\tau j}   \, d\tilde{\rho},
+\end{equation}
+and
+\begin{equation}
+\label{eq:rightNT}
+\tilde{\boldsymbol{T}} = \int_{\mathcal{B}} l_i f_j  \star\left(\hat{\u e}_i \wedge  \hat{\u e}_j\right) {\pi}_{\tau i}  \, d\tilde{f_{\tau j}} .
+\end{equation}
+
+It follows from the principle of balance of angular momentum that
+\begin{equation}
+\tu{L}'(\tau) = \tu{T}(\tau).
+\label{eq:DefAMBtensorCoeff}
+\end{equation}
+
+For 3D rigid body, $\tu{L} $ and $\tu{T}$ belong to $\bigwedge^1(\mathbb{R}^3)$, which is also three-dimensional. For 2D problem, $\tu{L},\tu{T} \in \bigwedge^0(\mathbb{R}^2) $, which is a space for scalars. In general, $\tu{L},\tu{T} \in \bigwedge^{n-2}(\mathbb{R}^n) $ for $n$-dimensional problem.
+
+
+\end{document}
